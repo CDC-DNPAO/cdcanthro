@@ -134,8 +134,9 @@ limits therefore differ from a direct LMS formula on purpose.
 on a fixture of children's measurements (`tests/testthat/fixtures/sas_cdc.csv`),
 with agreement to 1e-6 for every metric the SAS program produces. Both
 functions also have round-trip tests (a measurement constructed to sit at
-z returns z) and pinned regression values, so refactoring cannot change a
-result silently.
+z returns z) and stored reference outputs for a fixed set of children, so
+an internal code change that alters any result is caught by the tests
+rather than passing unnoticed.
 
 ## References
 
