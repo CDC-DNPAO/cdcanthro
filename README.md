@@ -94,6 +94,49 @@ See `?cdc_z`, `?who_z` and `?gradual_z` for the full list of output
 variables and the formulas used, and [NEWS.md](NEWS.md) for changes by
 version.
 
+## Conventions
+
+**Age units.** Each function takes age in the unit its reference tables use:
+
+| Function      | Age argument | Unit   | Range with results        |
+|---------------|--------------|--------|---------------------------|
+| `cdc_z()`     | `age`        | months | 24.0 to < 240             |
+| `who_z()`     | `agedays`    | days   | 0 to 1826                 |
+| `gradual_z()` | `agedays`    | days   | any (blends 731 to 1825)  |
+
+Give age as precisely as you have it. If ages are *completed* months
+(integers, as NHANES releases them), add 0.5 so that 36 means the midpoint
+of month 36; `cdc_z()` does this itself, with a warning, when every age is
+a whole number. To convert days to months divide by 30.4375; to convert
+completed months to days, add 0.5, multiply by 30.4375 and round.
+
+**Output names.** CDC metrics have bare names (`waz`, `haz`, `bmiz`,
+`bmip`, ...); WHO z-scores are prefixed `who_` (`who_waz`, `who_lhaz`,
+...); WHO plausibility flags are prefixed `f` (`fwaz`, `flhaz`, ...);
+gradual z-scores are prefixed `grad_` (`grad_waz`, ...). In `cdc_z()`
+output, `bmiz`/`bmip` are the extended values above the 95th percentile
+and `orig_bmiz`/`orig_bmip` are the LMS-only values. Because the three
+sets of names never collide, `who_z()` and `cdc_z()` can be run on the
+same data and `gradual_z(data)` then needs no other arguments -- its
+defaults are exactly their output names.
+
+**Two deliberate departures from a plain LMS calculation.** For BMI at or
+above the CDC 95th percentile, `cdc_z()` returns the extended z-score and
+percentile of Wei et al. (2020), which model BMI above the 95th percentile
+as half-normal instead of extrapolating the Box-Cox transformation; the
+LMS values are still available as `orig_bmiz`/`orig_bmip`. For the
+weight-based WHO indicators (`who_waz`, `who_wflz`, `who_bmiz`), `who_z()`
+applies WHO's restricted application of the LMS method beyond +/-3 SD, as
+WHO's own igrowup macros and the `anthro` package do. Results beyond those
+limits therefore differ from a direct LMS formula on purpose.
+
+**Validation.** `cdc_z()` is checked against output of the CDC SAS program
+on a fixture of children's measurements (`tests/testthat/fixtures/sas_cdc.csv`),
+with agreement to 1e-6 for every metric the SAS program produces. Both
+functions also have round-trip tests (a measurement constructed to sit at
+z returns z) and pinned regression values, so refactoring cannot change a
+result silently.
+
 ## References
 
 * Kuczmarski RJ, Ogden CL, Guo SS, et al. 2000 CDC Growth Charts for the
