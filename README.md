@@ -26,9 +26,10 @@ after. `gradual_z()` blends the two z-scores linearly between 2 and 5
 years so the transition is continuous.
 
 `cdc_z()` reproduces the output of the CDC SAS program, including the
-extended BMI metrics of Wei et al. (2020) for children with obesity, and is
-checked against SAS output in the package tests. The functions are written
-with `data.table` and are vectorized: call them once on a whole dataset,
+extended BMI metrics of Wei et al. (2020) and Hales et al. (2022) for
+children with obesity, and is checked against SAS output in the package
+tests. The functions are written with `data.table` and are vectorized:
+call them once on a whole dataset,
 not once per child.
 
 ## Installation
@@ -122,9 +123,10 @@ defaults are exactly their output names.
 
 **Two deliberate departures from a plain LMS calculation.** For BMI at or
 above the CDC 95th percentile, `cdc_z()` returns the extended z-score and
-percentile of Wei et al. (2020), which model BMI above the 95th percentile
-as half-normal instead of extrapolating the Box-Cox transformation; the
-LMS values are still available as `orig_bmiz`/`orig_bmip`. For the
+percentile of Wei et al. (2020) and Hales et al. (2022), which model BMI
+above the 95th percentile as half-normal instead of extrapolating the
+Box-Cox transformation; the LMS values are still available as
+`orig_bmiz`/`orig_bmip`. For the
 weight-based WHO indicators (`who_waz`, `who_wflz`, `who_bmiz`), `who_z()`
 applies WHO's restricted application of the LMS method beyond +/-3 SD, as
 WHO's own igrowup macros and the `anthro` package do. Results beyond those
@@ -146,6 +148,11 @@ rather than passing unnoticed.
   calculating BMI z-scores and percentiles above the 95th percentile of the
   CDC growth charts. *Ann Hum Biol* 2020;47(6):514-521.
   doi:10.1080/03014460.2020.1808065
+* Hales CM, Freedman DS, Akinbami L, Wei R, Ogden CL. Evaluation of
+  alternative body mass index (BMI) metrics to monitor weight status in
+  children and adolescents with extremely high BMI using CDC BMI-for-age
+  growth charts. *Vital Health Stat* 2022;2(197):1-42.
+  doi:10.15620/cdc:121711, https://stacks.cdc.gov/view/cdc/121711
 * Freedman DS, Woo JG, Ogden CL, Xu JH, Cole TJ. Distance and percent
   distance from median BMI as alternatives to BMI z-score. *Br J Nutr*
   2020;124(5):493-500. doi:10.1017/S0007114519002046
