@@ -28,9 +28,8 @@ years so the transition is continuous.
 `cdc_z()` reproduces the output of the CDC SAS program, including the
 extended BMI metrics of Wei et al. (2020) and Hales et al. (2022) for
 children with obesity, and is checked against SAS output in the package
-tests. The functions are written with `data.table` and are vectorized:
-call them once on a whole dataset,
-not once per child.
+tests. The functions are written with `data.table` so they're fast even
+in very large (eg, 100 M records) datasets. 
 
 ## Installation
 
@@ -87,7 +86,7 @@ Notes:
 * Zero and negative measurements are treated as missing.
 * Children outside a reference's age range are kept in the output with
   `NA` for the computed metrics.
-* `cdc_z()`'s `bmiz` and `bmip` are the extended values above the 95th
+* `cdc_z()`'s `bmiz` and `bmip` use the extended values above the 95th
   percentile; the LMS-only values are returned as `orig_bmiz` and
   `orig_bmip`.
 
@@ -111,7 +110,7 @@ of month 36; `cdc_z()` does this itself, with a warning, when every age is
 a whole number. To convert days to months divide by 30.4375; to convert
 completed months to days, add 0.5, multiply by 30.4375 and round.
 
-**Output names.** CDC metrics have bare names (`waz`, `haz`, `bmiz`,
+**Output names.** CDC z-scores for weight, height and BMI have bare names (`waz`, `haz`, `bmiz`,
 `bmip`, ...); WHO z-scores are prefixed `who_` (`who_waz`, `who_lhaz`,
 ...); WHO plausibility flags are prefixed `f` (`fwaz`, `flhaz`, ...);
 gradual z-scores are prefixed `grad_` (`grad_waz`, ...). In `cdc_z()`
