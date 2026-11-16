@@ -124,12 +124,10 @@ defaults are exactly their output names.
 above the CDC 95th percentile, `cdc_z()` returns the extended z-score and
 percentile of Wei et al. (2020) and Hales et al. (2022), which model BMI
 above the 95th percentile as half-normal instead of extrapolating the
-Box-Cox transformation; the LMS values are still available as
-`orig_bmiz`/`orig_bmip`. For the
+Box-Cox transformation. For the
 weight-based WHO indicators (`who_waz`, `who_wflz`, `who_bmiz`), `who_z()`
 applies WHO's restricted application of the LMS method beyond +/-3 SD, as
-WHO's own igrowup macros and the `anthro` package do. Results beyond those
-limits therefore differ from a direct LMS formula on purpose.
+WHO's own igrowup macros and the `anthro` package do.
 
 **Validation.** `cdc_z()` is checked against output of the CDC SAS program
 on a fixture of children's measurements (`tests/testthat/fixtures/sas_cdc.csv`),
@@ -141,27 +139,31 @@ rather than passing unnoticed.
 
 ## References
 
+* CDC SAS program for the growth charts:
+  https://www.cdc.gov/growth-chart-training/hcp/computer-programs/sas.html
+* Daymont C, Hwang W, Paul IM, Shur N, Freedman DS. Creation and
+  evaluation of new growth charts with a gradual transition from WHO to CDC
+  values. *Pediatrics* 2025;156(3):e2025070697. doi:10.1542/peds.2025-070697
+* Freedman DS, Woo JG, Ogden CL, Xu JH, Cole TJ. Distance and percent
+  distance from median BMI as alternatives to BMI z-score. *Br J Nutr*
+  2020;124(5):493-500. doi:10.1017/S0007114519002046
+* Hales CM, Freedman DS, Akinbami L, Wei R, Ogden CL. Evaluation of
+  alternative body mass index (BMI) metrics to monitor weight status in
+  children and adolescents with extremely high BMI using CDC BMI-for-age
+  growth charts. *Vital Health Stat* 2022;2(197):1-42.
+  doi:10.15620/cdc:121711, https://stacks.cdc.gov/view/cdc/121711
 * Kuczmarski RJ, Ogden CL, Guo SS, et al. 2000 CDC Growth Charts for the
   United States: methods and development. *Vital Health Stat* 2002;11(246):1-190.
 * Wei R, Ogden CL, Parsons VL, Freedman DS, Hales CM. A method for
   calculating BMI z-scores and percentiles above the 95th percentile of the
   CDC growth charts. *Ann Hum Biol* 2020;47(6):514-521.
   doi:10.1080/03014460.2020.1808065
-* Hales CM, Freedman DS, Akinbami L, Wei R, Ogden CL. Evaluation of
-  alternative body mass index (BMI) metrics to monitor weight status in
-  children and adolescents with extremely high BMI using CDC BMI-for-age
-  growth charts. *Vital Health Stat* 2022;2(197):1-42.
-  doi:10.15620/cdc:121711, https://stacks.cdc.gov/view/cdc/121711
-* Freedman DS, Woo JG, Ogden CL, Xu JH, Cole TJ. Distance and percent
-  distance from median BMI as alternatives to BMI z-score. *Br J Nutr*
-  2020;124(5):493-500. doi:10.1017/S0007114519002046
-* World Health Organization. WHO Child Growth Standards: methods and
-  development. Geneva: WHO; 2006.
-* Daymont C, Hwang W, Paul IM, Shur N, Freedman DS. Creation and
-  evaluation of new growth charts with a gradual transition from WHO to CDC
-  values. *Pediatrics* 2025;156(3):e2025070697. doi:10.1542/peds.2025-070697
-* CDC SAS program for the growth charts:
-  https://www.cdc.gov/growth-chart-training/hcp/computer-programs/sas.html
+* World Health Organization, Department of Nutrition for Health and Development.
+  WHO Child Growth Standards: Length/height-for-age, weight-for-age,
+  weight-for-length, weight-for-height, and body mass index-for-age. Methods and
+  Development. Geneva; 2006, https://www.who.int/publications/i/item/924154693X
+
+
 
 ## Citation
 
