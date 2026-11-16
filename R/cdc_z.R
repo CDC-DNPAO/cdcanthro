@@ -163,7 +163,7 @@ cdc_z <- function(data,
 
   if (length(uages) > 0L && !any(abs(uages - round(uages)) > 1e-8)) {
     warning("All ages are integers so 0.5 months has been added before the ",
-            "calculations to allign with CDC intervatls. See Details. ",
+            "calculations to align with CDC intervatls. See Details. ",
             "The input data was not modified.")
     set(work, j = "age", value = work$age + 0.5)
     uages <- uages + 0.5  # Update unique ages to match
@@ -359,7 +359,7 @@ cdc_z <- function(data,
             " to avoid conflict with computed values.")
   }
 
-  stopifnot(identical(rownames(work), rownames(data)))
+  stopifnot(nrow(work) == nrow(data))
   out <- setDT(c(as.list(data), as.list(work)[v]))
 
   # return same type of data that was input (out, not data)

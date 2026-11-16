@@ -1,7 +1,7 @@
 Package: cdcanthro
 Title: Standardized Metrics Based on the CDC and WHO Growth Charts
-Version: 0.5.1
-Date: 2026-11-10
+Version: 0.6.0
+Date: 2026-11-15
 Authors@R: c(
     person("David", "Freedman",
            role = c("aut", "cre"),
@@ -20,8 +20,8 @@ Description: Calculation of sex- and age-standardized growth metrics using
     be at the WHO 10th percentile on the day before her second birthday, but
     at the CDC 2nd percentile the following day. The gradual_z() function
     reduces the differences among 2- to 5-year-olds by taking a weighted
-    average of the CDC and WHO z-scores, as described in Daymont et al.
-    (2025) <doi:10.1542/peds.2025-070697>.
+    average of the CDC and WHO z-scores as described in Daymont et al. (2025) 
+    <doi:10.1542/peds.2025-070697>.
 License: GPL-3
 URL: https://github.com/CDC-DNPAO/cdcanthro
 BugReports: https://github.com/CDC-DNPAO/cdcanthro/issues
@@ -29,7 +29,6 @@ Language: en-US
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
-NeedsCompilation: no
 Depends:
     R (>= 3.5.0)
 Imports:

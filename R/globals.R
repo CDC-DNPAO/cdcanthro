@@ -61,7 +61,7 @@ utils::globalVariables(c(
     # biologically implausible value (BIV) flags
     'fwaz', 'flhaz', 'fwflz', 'fbmiz', 'fheadcz',
     # package dataset
-    'who_ref_data', 'dt1',
+    'who_ref_data',
 
     ## ------ gradual_z ---------------------------------------------------
     'grad_waz', 'grad_haz', 'grad_bmiz', 'lhaz', 'headcz', 'wflz',
