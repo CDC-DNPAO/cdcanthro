@@ -122,7 +122,7 @@ defaults are exactly their output names.
 
 **Two deliberate departures from a plain LMS calculation.** For BMI at or
 above the CDC 95th percentile, `cdc_z()` returns the extended z-score and
-percentile of Wei et al. (2020) and Hales et al. (2022), which model BMI
+percentile of Wei et al. (2020), which models BMI
 above the 95th percentile as half-normal instead of using the Box-Cox transformation. 
 For the weight-based WHO indicators (`who_waz`, `who_wflz`, `who_bmiz`), `who_z()`
 WHO extaolates the SD2 / SD3 distance to values beyond +/-3 SD, as
@@ -146,11 +146,6 @@ rather than passing unnoticed.
 * Freedman DS, Woo JG, Ogden CL, Xu JH, Cole TJ. Distance and percent
   distance from median BMI as alternatives to BMI z-score. *Br J Nutr*
   2020;124(5):493-500. doi:10.1017/S0007114519002046
-* Hales CM, Freedman DS, Akinbami L, Wei R, Ogden CL. Evaluation of
-  alternative body mass index (BMI) metrics to monitor weight status in
-  children and adolescents with extremely high BMI using CDC BMI-for-age
-  growth charts. *Vital Health Stat* 2022;2(197):1-42.
-  doi:10.15620/cdc:121711, https://stacks.cdc.gov/view/cdc/121711
 * Kuczmarski RJ, Ogden CL, Guo SS, et al. 2000 CDC Growth Charts for the
   United States: methods and development. *Vital Health Stat* 2002;11(246):1-190.
 * Wei R, Ogden CL, Parsons VL, Freedman DS, Hales CM. A method for
