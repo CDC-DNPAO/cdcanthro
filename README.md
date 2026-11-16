@@ -14,7 +14,7 @@ Three functions:
 
 | Function      | Reference                       | Ages                   | Main outputs |
 |---------------|---------------------------------|------------------------|--------------|
-| `cdc_z()`     | 2000 CDC Growth Charts          | 24 to < 240 months     | `waz`, `haz`, `bmiz`, `bmip` (extended z-scores and percentiles for BMIs >= 95th percentile), `bmip95`, modified z-scores |
+| `cdc_z()`     | 2000 CDC Growth Charts          | 24 to < 240 months     | `waz` (weight-for-age z), `haz`, `bmiz`, `bmip` (extended z-scores and percentiles for BMIs >= 95th percentile), `bmip95`, modified z-scores |
 | `who_z()`     | WHO Child Growth Standards 2006 | 0 to 1826 days (5 y)   | `who_waz`, `who_lhaz`, `who_bmiz`, `who_wflz`, `who_headcz`, plus biologically-implausible-value flags |
 | `gradual_z()` | Daymont et al. 2025             | 2 to 5 years           | `grad_waz`, `grad_haz`, `grad_bmiz`: a weighted average of the WHO and CDC z-scores that removes the jump at age 2 |
 
