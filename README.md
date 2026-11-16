@@ -125,7 +125,7 @@ above the CDC 95th percentile, `cdc_z()` returns the extended z-score and
 percentile of Wei et al. (2020), which models BMI
 above the 95th percentile as half-normal instead of using the Box-Cox transformation. 
 For the weight-based WHO indicators (`who_waz`, `who_wflz`, `who_bmiz`), `who_z()`
-WHO extaolates the SD2 / SD3 distance to values beyond +/-3 SD, as
+WHO extapolates the SD2 vs SD3 distance to values beyond +/-3 SD, as
 does the WHO `anthro` package.
 
 **Validation.** `cdc_z()` is checked against output of the CDC SAS program
