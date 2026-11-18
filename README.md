@@ -12,11 +12,11 @@ tables of the CDC Growth Charts and the WHO Child Growth Standards.
 
 Three functions:
 
-| Function      | Reference                       | Ages                   | Main outputs |
-|---------------|---------------------------------|------------------------|--------------|
-| `cdc_z()`     | 2000 CDC Growth Charts          | 24 to < 240 months     | `waz` (weight-for-age z), `haz`, `bmiz`, `bmip` (extended z-scores and percentiles for BMIs >= 95th percentile), `bmip95`, modified z-scores |
-| `who_z()`     | WHO Child Growth Standards 2006 | 0 to 1826 days (5 y)   | `who_waz`, `who_lhaz`, `who_bmiz`, `who_wflz`, `who_headcz`, plus biologically-implausible-value flags |
-| `gradual_z()` | Daymont et al. 2025             | 2 to 5 years           | `grad_waz`, `grad_haz`, `grad_bmiz`: a weighted average of the WHO and CDC z-scores that removes the jump at age 2 |
+| Function | Reference | Ages | Main outputs |
+|:--------------|:-------------------|:-----------------|:---------------------------------------------|
+| `cdc_z()` | 2000 CDC Growth Charts | 24 to < 240 months | `waz` (weight-for-age z), `haz`, `bmiz`, `bmip` (extended z-scores and percentiles for BMIs >= 95th percentile), `bmip95`, modified z-scores |
+| `who_z()` | WHO Child Growth Standards 2006 | 0 to 1826 days (5 y) | `who_waz`, `who_lhaz`, `who_bmiz`, `who_wflz`, `who_headcz`, plus biologically-implausible-value flags |
+| `gradual_z()` | Daymont et al. 2025 | 2 to 5 years | `grad_waz`, `grad_haz`, `grad_bmiz`: a weighted average of the WHO and CDC z-scores that removes the jump at age 2 |
 
 CDC recommends the WHO standards under 24 months and the CDC charts from
 24 months. Switching references on a child's second birthday creates a
@@ -125,7 +125,7 @@ above the CDC 95th percentile, `cdc_z()` returns the extended z-score and
 percentile of Wei et al. (2020), which models BMI
 above the 95th percentile as half-normal instead of using the Box-Cox transformation. 
 For the weight-based WHO indicators (`who_waz`, `who_wflz`, `who_bmiz`), `who_z()`
-WHO extapolates the SD2 vs SD3 distance to values beyond +/-3 SD, as
+extrapolates the SD2 vs SD3 distance to values beyond +/-3 SD, as
 does the WHO `anthro` package.
 
 **Validation.** `cdc_z()` is checked against output of the CDC SAS program

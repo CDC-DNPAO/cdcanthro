@@ -1,6 +1,6 @@
 Package: cdcanthro
 Title: Standardized Metrics Based on the CDC and WHO Growth Charts
-Version: 0.6.0
+Version: 0.6.1
 Date: 2026-11-15
 Authors@R: c(
     person("David", "Freedman",

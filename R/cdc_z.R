@@ -163,7 +163,7 @@ cdc_z <- function(data,
 
   if (length(uages) > 0L && !any(abs(uages - round(uages)) > 1e-8)) {
     warning("All ages are integers so 0.5 months has been added before the ",
-            "calculations to align with CDC intervatls. See Details. ",
+            "calculations to align with CDC intervals. See Details. ",
             "The input data was not modified.")
     set(work, j = "age", value = work$age + 0.5)
     uages <- uages + 0.5  # Update unique ages to match
@@ -253,8 +253,7 @@ cdc_z <- function(data,
     work[, mod_waz := (wt - wm) / (0.5 * fifelse(wt < wm, rc("wt_sdm2"), rc("wt_sdp2")))]
     # z-scores switch to the log (L = 0) form when |L| < 0.01, matching the
     # CDC SAS program. In cdc_ref_data only hl crosses zero (range -0.39 to
-    # 2.24), so only height can hit the rule, including at interpolated
-    # ages; wl is always <= -0.197, so the line below never fires:
+    # 2.24). wl is always <= -0.197, so the line below never fires:
     # work[abs(wl) < 0.01, waz := log(wt / wm) / ws]
     work[, wap := 100 * pnorm(waz)]
     work[, c("wl", "wm", "ws") := NULL]
@@ -308,9 +307,7 @@ cdc_z <- function(data,
     }
 
     drop_cols <- intersect(c('bmi_ratio', 'z1', 'z0'), names(work))
-    for (col in drop_cols) {
-      set(work, j = col, value = NULL)
-    }
+    if (length(drop_cols)) work[, (drop_cols) := NULL]
 
     # Extended BMI percentile and z-score for BMI >= 95th percentile
     # (Wei et al. 2020): above the 95th percentile the LMS z-scores compress
