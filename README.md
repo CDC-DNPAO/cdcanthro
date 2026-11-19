@@ -20,7 +20,7 @@ Three functions:
 
 CDC recommends the WHO standards under 24 months and the CDC charts from
 24 months. Switching references on a child's second birthday creates a
-discontinuity -- a girl weighing 9.9 kg is at the WHO 10th percentile the
+discontinuity -- a girl weighing 9.9 kg is at the WHO 11th percentile the
 day before her second birthday and at the CDC 2nd percentile the day
 after. `gradual_z()` blends the two z-scores linearly between 2 and 5
 years so the transition is continuous.

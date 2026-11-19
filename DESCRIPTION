@@ -17,7 +17,7 @@ Description: Calculation of sex- and age-standardized growth metrics using
     Because CDC recommends using the WHO Standards for children under 24
     months and the CDC Charts among older children, there can be large
     differences at age 2.0 years. For example, a girl weighing 9.9 kg would
-    be at the WHO 10th percentile on the day before her second birthday, but
+    be at the WHO 11th percentile on the day before her second birthday, but
     at the CDC 2nd percentile the following day. The gradual_z() function
     reduces the differences among 2- to 5-year-olds by taking a weighted
     average of the CDC and WHO z-scores as described in Daymont et al. (2025) 

@@ -267,7 +267,7 @@ who_z <- function(data,
       ulens <- unique(work$len_2[!is.na(work$len_2)])
       needs_interp <- any(!ulens %in% dref2$len)
 
-      # Lengths off the 0.01 cm grid get L, M, S by linear interpolation
+      # Lengths off the 0.1 cm grid get L, M, S by linear interpolation
       # within sex. rule = 1 returns NA outside 45-110 cm, so those children
       # get NA wflz.
       if (needs_interp) {

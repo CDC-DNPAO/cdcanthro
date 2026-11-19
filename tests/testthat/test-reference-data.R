@@ -22,7 +22,7 @@ test_that("who_ref_data has one row per sex and age / length on the expected gri
   fl <- r[r$denom == "forlen", ]
   for (s in 1:2) {
     expect_equal(sort(fa$agedays[fa$sexn == s]), 0:1856, label = paste("WHO agedays, sex", s))
-    expect_equal(sort(fl$len[fl$sexn == s]), round(seq(45, 110, by = 0.01), 2),
+    expect_equal(sort(fl$len[fl$sexn == s]), round(seq(45, 110, by = 0.1), 2),
                  label = paste("WHO lengths, sex", s))
   }
   expect_false(anyDuplicated(fa[c("sexn", "agedays")]) > 0)

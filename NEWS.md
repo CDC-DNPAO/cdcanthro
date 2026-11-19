@@ -1,3 +1,11 @@
+# cdcanthro 0.6.1
+
+* Recreated the WHO LMS files to match the current WHO website. There are now 4 to 5 
+  decimal places for each value, while the older version had > 12. The data on the WHO
+  website changed at some point.  A comparison of who_z() output with that of the anthro
+  package is included in testthat.
+* Formatting and editing changes
+
 # cdcanthro 0.6.0 (2026-11-16)
 
 * Unrecognized sex codes now produce a warning that reports how many rows were
