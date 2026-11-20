@@ -102,7 +102,7 @@ version.
 |---------------|--------------|--------|---------------------------|
 | `cdc_z()`     | `age`        | months | 24.0 to < 240             |
 | `who_z()`     | `agedays`    | days   | 0 to 1826                 |
-| `gradual_z()` | `agedays`    | days   | 731 to 1825               |
+| `gradual_z()` | `agedays`    | days   | 730 to 1826               |
 
 Give age as precisely as you have it. If ages are *completed* months
 (integers, as NHANES releases them), add 0.5 so that 36 means the midpoint
