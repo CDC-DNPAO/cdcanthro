@@ -16,7 +16,7 @@ Three functions:
 |:--------------|:-------------------|:-----------------|:---------------------------------------------|
 | `cdc_z()` | 2000 CDC Growth Charts | 24 to < 240 months | `waz` (weight-for-age z), `haz`, `bmiz`, `bmip` (extended z-scores and percentiles for BMIs >= 95th percentile), `bmip95`, modified z-scores |
 | `who_z()` | WHO Child Growth Standards 2006 | 0 to 1826 days (5 y) | `who_waz`, `who_lhaz`, `who_bmiz`, `who_wflz`, `who_headcz`, plus biologically-implausible-value flags |
-| `gradual_z()` | Daymont et al. 2025 | 2 to 5 years | `grad_waz`, `grad_haz`, `grad_bmiz`: a weighted average of the WHO and CDC z-scores that removes the jump at age 2 |
+| `gradual_z()` | Daymont et al. 2025 | 2 to 5 years | `grad_waz`, `grad_haz`, `grad_bmiz`: weighted averages of the WHO and CDC z-scores that removes the jump at age 2 |
 
 CDC recommends the WHO standards under 24 months and the CDC charts from
 24 months. Switching references on a child's second birthday creates a
@@ -146,6 +146,11 @@ rather than passing unnoticed.
 * Freedman DS, Woo JG, Ogden CL, Xu JH, Cole TJ. Distance and percent
   distance from median BMI as alternatives to BMI z-score. *Br J Nutr*
   2020;124(5):493-500. doi:10.1017/S0007114519002046
+* Hales CM, Freedman DS, Akinbami L, Wei R, Ogden CL (2022).
+  Evaluation of alternative body mass index (BMI) metrics to monitor weight
+  status in children and adolescents with extremely high BMI using CDC
+  BMI-for-age growth charts. *Vital and Health Statistics, Series 1*,
+  No. 197, 1-42. doi:10.15620/cdc:121711.
 * Kuczmarski RJ, Ogden CL, Guo SS, et al. 2000 CDC Growth Charts for the
   United States: methods and development. *Vital Health Stat* 2002;11(246):1-190.
 * Wei R, Ogden CL, Parsons VL, Freedman DS, Hales CM. A method for

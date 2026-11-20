@@ -7,7 +7,7 @@ LMS parameters (L, M, S) in the WHO charts for age- and sex-standardized growth 
 }
 
 \format{
-A data.table with 16716 rows: columns for sex (\code{sexn}, 1 = boys, 2 = girls),
+A data.table with columns for sex (\code{sexn}, 1 = boys, 2 = girls),
 age in days (\code{agedays}, 0 to 1856), length (\code{len}, 45 to 110 cm), and LMS values.
 Variable names represent weight (\code{wei}), length or height (\code{len}),
 BMI (\code{bmi}), weight-for-length (\code{wfl}), head circumference (\code{headc}),
@@ -18,10 +18,10 @@ representing the LMS parameters. The arm circumference and skinfold parameters
 
 In contrast to the sex- and age-standardized metrics, weight-for-length is weight standardized
 for sex and length; it represents the distribution of weights for a specific length. Note that
-the length/height reference values are given in 0.01 cm increments.
+the length/height reference values are given in 0.1 cm increments.
 
 The \code{denom} variable is \code{"forage"} for rows indexed by age
-(\code{agedays}) and \code{"forlen"} for weight-for-length rows (indexed by \code{len}).
+(\code{agedays}), such as BMI-for-age, and \code{"forlen"} for weight-for-length rows (indexed by \code{len}).
 }
 
 \usage{

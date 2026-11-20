@@ -26,7 +26,7 @@ who_z(data,
           sex_code = 1:2)
 }
 \arguments{
-  \item{data}{a \code{data.frame}, \code{data.table}, or tibble (\code{tbl_df}) containing the 
+  \item{data}{a \code{data.frame}, \code{data.table}, or tibble (\code{tbl_df}) containing the
         input data. The class of the returned object matches the class of \code{data}.
         Must contain a variable named \code{sex} or \code{SEX} (but not both).}
   \item{agedays}{Age in completed days. \strong{Required.} Non-integer values are rounded
@@ -39,7 +39,7 @@ who_z(data,
         the median between 730 and 731 days in the reference data, where the measurement
         changes from recumbent length to standing height; the same \code{lenhei} value
         therefore gives different z-scores on the two days. For weight-for-length, the
-        reference data are tabulated in 0.01 cm increments and other lengths are linearly
+        reference data are tabulated in 0.1 cm increments and other lengths are linearly
         interpolated.}
   \item{bmi}{Body mass index, kg/m^2. \emph{Optional.} If not supplied but both \code{wt}
         and \code{lenhei} are, BMI is calculated as \code{wt / (lenhei/100)^2} and returned.}
@@ -49,27 +49,27 @@ who_z(data,
 }
 \details{
 Column names can be given with or without quotation marks. Naming the arguments rather than
-relying on position is recommended, e.g. \code{who_z(d, agedays = age, wt = weight)}; 
-otherwise a value can silently land in the wrong slot. 
+relying on position is recommended, e.g. \code{who_z(d, agedays = age, wt = weight)};
+otherwise a value can silently land in the wrong slot.
 Any absent measurement is skipped, and its z-score is not returned.
 
 The function expects the child's sex to be named \code{sex}; either upper- or
 lower-case is fine. You cannot have both \code{SEX} and \code{sex} in your data.
 Values can be coded as \code{1/2}, \code{boy(s)/girl(s)}, \code{b/g}, \code{male(s)/female(s)},
-or \code{m/f}, in upper- or lower-case. 
+or \code{m/f}, in upper- or lower-case.
 
-If sex is numeric and not coded as 1/2, specify this in the optional \code{sex_code} argument; 
-the code for boys is the first number.  For example, 0/1 coding would be specified 
+If sex is numeric and not coded as 1/2, specify this in the optional \code{sex_code} argument;
+the code for boys is the first number.  For example, 0/1 coding would be specified
 as \code{sex_code} = 0:1 or \code{sex_code} = c(0,1).
 
-At least one of \code{wt}, \code{lenhei}, \code{bmi} or \code{headc} must be present. Metrics that cannot 
-be calculated from the supplied variables are silently omitted from the output. If a supplied 
+At least one of \code{wt}, \code{lenhei}, \code{bmi} or \code{headc} must be present. Metrics that cannot
+be calculated from the supplied variables are silently omitted from the output. If a supplied
 column name doesn't exist in data (a likely typo), a warning is issued. If \code{data} already
 has a column with the name of an output variable (for example \code{fwaz}), that column is
 renamed with a \code{0} suffix and a warning is issued. Zero and negative measurements are
 treated as missing.
 
-Age in the WHO reference data goes from 0 to 1856 days (1856/365.25 = 5.08 y), 
+Age in the WHO reference data goes from 0 to 1856 days (1856/365.25 = 5.08 y),
 but calculations in who_z go up to 1826 days (4.993 y). Weight-for-length Z
 is calculated only for children <= 730 days of age with a length between 45 and 110 cm.
 
@@ -83,7 +83,7 @@ the Box-Cox transformation. Length/height-for-age and head-circumference-for-age
 adjusted (WHO 2006, chapter 7).
 }
 \value{
-A \code{data.table}, tibble, or \code{data.frame} containing the original data plus the calculated metrics. 
+The output is a \code{data.table}, tibble, or \code{data.frame} containing the input data and the calculated metrics.
 
 WHO Z-scores:
 \itemize{
@@ -106,7 +106,11 @@ outside the WHO plausibility range, 0 if inside, and NA if the z-score is NA:
   \item \code{fheadcz}: 1 if \code{who_headcz} < -5 or > 5
 }
 Note that there doesn't appear to be any publication that justifies these cutpoints.  While values
-outside these ranges are outliers, the measurement may be correct.
+outside these ranges are outliers, the measurement may be correct.  If these flags clutter your output, they
+can be deleted with the following code:
+
+flags <- intersect(c("fwaz", "flhaz", "fwflz", "fbmiz", "fheadcz"), names(output))\cr
+for (f in flags) output[[f]] <- NULL
 }
 \references{
 World Health Organization, Department of Nutrition for Health and Development.
@@ -117,7 +121,7 @@ Development. Geneva; 2006.
 
 The reference WHO LMS values for weight-for-age are in the 'Expanded Tables' files at
 \url{https://www.who.int/tools/child-growth-standards/standards/weight-for-age}. Reference values
-for the other measures are in the left column. 
+for the other measures are in the left column.
 }
 \author{David Freedman \email{DavidSFreedman@gmail.com}}
 \seealso{

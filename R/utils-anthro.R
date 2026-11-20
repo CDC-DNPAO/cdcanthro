@@ -1,60 +1,52 @@
 # =============================================================================
-# Internal helpers shared by who_z() and cdc_z()
+# Internal helpers shared by cdc_z() and who_z()
 # =============================================================================
 #
-# Both functions take a data.frame/data.table/tibble of measurements, resolve
-# a handful of bare-column-name arguments against it, normalize a sex column
-# coded in various ways, and hand back a result in the same type they were
-# given. That plumbing is identical in spirit between the WHO and CDC
-# functions, so it lives here once instead of being maintained twice.
+# Both functions take a data.frame, data.table or tibble, resolve column-name
+# arguments against it, standardize the sex column, look up reference values,
+# and return a result of the same class they were given. That shared plumbing
+# lives here, once, so the two functions cannot drift apart.
 #
-# None of these helpers change the algorithmic complexity of the code that
-# calls them
+# Contents, in the order the main functions use them:
+#   validate_sex_code()     check the sex_code argument
+#   as_data_table_safe()    data.table container to work in; records input class
+#   resolve_sex_column()    find the column named sex / SEX / Sex
+#   resolve_col_name()      argument expression -> column-name string
+#   resolve_optional_var()  resolve an optional measurement argument
+#   is_num_or_all_na()      is a measurement column usable?
+#   normalize_sex()         sex codes -> 1L (boys) / 2L (girls) / NA
+#   num_col()               measurement column -> numeric
+#   set_nonpositive_na()    zero and negative measurements -> NA
+#   ref_index_lookup()      row index into a reference table, and rc()
+#   restore_input_type()    convert the result back to the input's class
 
 # ---- column-name argument resolution ---------------------------------------
 
-# Turn a captured argument expression into a column-name string. Accepts
-# both a bare symbol (wt = weight) and a quoted string (wt = "weight").
-# String literals are self-quoting in R, so substitute() already returns
-# them as character values -- checking is.character() on the *unevaluated*
-# expression distinguishes the two forms without ever evaluating anything,
-# so a bare symbol that happens to collide with a variable name in the
-# caller's environment is never mistakenly evaluated.
+# Turn a captured argument expression into a column-name string. Accepts a
+# bare symbol (wt = weight) or a quoted string (wt = "weight"). The
+# expression is never evaluated, so a column name that happens to match a
+# variable in the caller's workspace is not mistaken for that variable.
 #
-# IMPORTANT: this function does not call substitute() itself -- it can't.
-# substitute() only sees how an argument was written one frame up from
-# where it runs, so who_z()/cdc_z() must call substitute() on their
-# own formal arguments and pass the resulting language object in here.
+# The caller must pass substitute(arg) taken in its own frame: substitute()
+# only sees how an argument was written in the function whose argument it
+# is, so it cannot be called here.
 resolve_col_name <- function(expr) {
    if (is.character(expr)) expr else deparse(expr)
 }
 
-# Resolve one optional measurement argument end to end. `expr` must already
-# be the result of substitute(the_arg) taken in the caller's own frame, and
-# `was_missing` the result of missing(the_arg) taken there too.
+# Resolve one optional measurement argument (wt, ht, lenhei, bmi, headc).
+# `expr` is substitute(arg) and `was_missing` is missing(arg), both taken in
+# the calling function.
 #
-# `expr` is resolved into a candidate column name via resolve_col_name()
-# UNCONDITIONALLY -- including when was_missing is TRUE. That matters: a
-# formal like `wt = wt` has a default expression that is itself just the
-# symbol `wt`, and substitute(wt) returns that symbol whether or not the
-# caller wrote `wt = ...` (missing() only reports whether they wrote it, not
-# whether a default exists) -- so the default's own column name is checked
-# against `data` here exactly the same way an explicitly supplied name
-# would be. Previously this function short-circuited to var = NULL whenever
-# was_missing was TRUE, which meant a column literally named 'wt' was never
-# even looked up unless the caller redundantly wrote `wt = wt` themselves;
-# age_var (resolved directly with resolve_col_name(substitute(age)) in
-# cdc_z()/who_z(), with no missing() check at all) never had this problem,
-# which is what exposed the inconsistency.
+# The name is resolved whether or not the argument was supplied, so a
+# default such as wt = wt finds a column named 'wt' without the caller
+# having to write wt = wt.
 #
-# If the argument WAS supplied (was_missing = FALSE) but names a column that
-# doesn't exist, that's almost always a typo rather than a genuine "I don't
-# have this measurement" -- so a warning is issued immediately, and the
-# caller can use $typo to avoid also emitting a generic "not supplied"
-# warning for the same problem. When was_missing = TRUE and the default's
-# column doesn't exist either, that's NOT a typo -- the caller never named
-# anything -- so no typo warning fires; has = FALSE lets the generic
-# "missing" warnings in cdc_z()/who_z() cover it instead.
+# - Column exists: has = TRUE, var = its name.
+# - Argument supplied but the column doesn't exist: almost certainly a typo,
+#   so warn; has = FALSE.
+# - Argument not supplied and the default column doesn't exist: the caller
+#   simply doesn't have that measurement; no warning; has = FALSE.
 #
 # Returns list(var = <name or NULL>, has = <logical>, typo = <logical>).
 resolve_optional_var <- function(data, expr, was_missing, arg_label) {
@@ -70,13 +62,9 @@ resolve_optional_var <- function(data, expr, was_missing, arg_label) {
 
 # ---- sex column -------------------------------------------------------------
 
-# Locate and standardize the caller's sex column. It must be named some case
-# variant of 'sex' (sex, SEX, Sex, ...); both 'sex' and 'SEX' present at once
-# is ambiguous.
-#
-# Stops with a message specific to the actual problem -- "not found" vs.
-# "more than one candidate" -- rather than one message covering both, so the
-# caller knows exactly what to fix.
+# Return the name of the caller's sex column, which must be some case
+# variant of 'sex' (sex, SEX, Sex, ...). Stops with a specific message if
+# there is none, or more than one (e.g. both 'sex' and 'SEX').
 resolve_sex_column <- function(data) {
   nms <- grep('^sex$', names(data), ignore.case = TRUE, value = TRUE)
   if (length(nms) == 0) {
@@ -91,12 +79,10 @@ resolve_sex_column <- function(data) {
   nms   # return the name; no renaming
 }
 
-# Validate a sex_code argument: c(male_code, female_code), the two raw
-# values that mean "boy" / "girl" in the caller's sex column (default 1/2;
-# e.g. c(0, 1) for a 0/1-coded column). Defined once here so any caller that
-# accepts a custom sex coding -- currently normalize_sex() itself, and
-# cdc_z()/who_z() for a fast, early check before doing any other work --
-# shares one validation and one error message instead of drifting apart.
+# Check sex_code = c(male_code, female_code): the two values that mean boy
+# and girl in a numeric sex column (default 1/2; c(0, 1) for 0/1 coding).
+# cdc_z() and who_z() call this first so a bad value fails before any other
+# work; normalize_sex() calls it again.
 validate_sex_code <- function(sex_code) {
    if (!is.numeric(sex_code) || length(sex_code) != 2 || anyNA(sex_code) ||
        sex_code[1] == sex_code[2]) {
@@ -107,25 +93,22 @@ validate_sex_code <- function(sex_code) {
    invisible(sex_code)
 }
 
-# Sex codes:
-# Recognized character codes (compared after trimws() and tolower()).
-# Whole values are matched, not just the first letter, so that codes such
-# as 'missing', 'mujer' or 'not stated' become NA instead of being read as
-# a sex from their first letter.
+# Recognized text sex codes, compared after trimws() and tolower(). Whole
+# values are matched, not first letters, so codes such as 'missing',
+# 'mujer' or 'not stated' become NA instead of being read as a sex.
 .male_words   <- c("m", "male", "males", "b", "boy", "boys")
 .female_words <- c("f", "female", "females", "g", "girl", "girls")
 
-# Map a vector of sex codes to 1L (boys) / 2L (girls) / NA_integer_.
+# Map a vector of sex codes to 1L (boys), 2L (girls) or NA_integer_.
+#   numeric sx:          sex_code[1] -> 1L, sex_code[2] -> 2L
+#   character/factor sx: the sex_code values as text (e.g. "1", "2"), or the
+#                        words in .male_words / .female_words
+# Non-missing values that match neither become NA, with ONE warning giving
+# the number of rows and the values seen, so a coding problem cannot
+# silently drop children. (If no value matches at all, the caller stops
+# with an error instead, so no warning is given here.)
 #
-# Numeric sx: sex_code[1] -> 1L, sex_code[2] -> 2L.
-# Character/factor sx: the two sex_code values written as text (e.g. "1",
-# "2"), or the words in .male_words / .female_words, case-insensitive.
-#
-# Non-missing values that match neither code become NA, and ONE warning
-# reports how many rows that affected and which values were seen, so a
-# coding problem cannot silently drop children from an analysis.
-#
-# Character input maps only the *unique* values and expands back with
+# Text input is matched on its unique values only and expanded back with
 # chmatch(), so the string work runs on a handful of distinct codes.
 normalize_sex <- function(sx, sex_code = 1:2) {
   validate_sex_code(sex_code)
@@ -154,6 +137,15 @@ normalize_sex <- function(sx, sex_code = 1:2) {
   out
 }
 
+# Put the caller's columns in a new data.table container to work in, and
+# record whether the input was a data.frame or a tibble so
+# restore_input_type() can convert the result back.
+#
+# This is a shallow copy: the container (and so its column list and names)
+# is new, but the column vectors are shared with the caller's object. That
+# is safe because cdc_z() and who_z() only add new columns to it or rename
+# it (setnames()); neither ever modifies an existing column in place, which
+# would change the caller's data too.
 as_data_table_safe <- function(data) {
   input_was_tibble <- inherits(data, "tbl_df")
   input_was_df     <- inherits(data, "data.frame") &&
@@ -168,7 +160,9 @@ as_data_table_safe <- function(data) {
   )
 }
 
-# set 0 and negative values of the various measures to NA
+# Set zero and negative values in the named measurement columns to NA, by
+# reference. Used on the private `work` table only, never on the caller's
+# columns. Columns not present are skipped.
 set_nonpositive_na <- function(data, cols) {
   cols <- intersect(cols, names(data))
 
@@ -182,9 +176,41 @@ set_nonpositive_na <- function(data, cols) {
   invisible(data)
 }
 
-# A measurement column is usable if it is numeric, or if it is entirely NA.
-# An all-NA column such as data.frame(ht = NA) is logical, not numeric, but
-# simply means "no values"; num_col() turns it into NA_real_.
+# Look up each row of `work` in a reference table by index, not by a join.
+#
+# idx[i] is the row of `ref` whose keys (sex, age) match work[i], or NA when
+# there is no match (age outside the reference range, unrecognized sex,
+# missing age). Nothing is re-sorted, so idx[i] always belongs to work[i].
+#
+# rc(col) returns ref[[col]][idx]: one reference value per row of `work`,
+# NA where idx is NA, which is what makes those children's z-scores NA.
+# Pulling one column at a time avoids building an n-row copy of the
+# reference table, and columns for measurements not supplied are never
+# touched. rc() keeps `ref` and `idx` from this call (a closure), so the
+# caller passes only the column name: rc("wm"), rc("wei_l"), ...
+#
+# idx has exactly nrow(work) elements only if `ref` has one row per key;
+# duplicated keys would misalign every result, so that is an error.
+# Used by both cdc_z() and who_z().
+ref_index_lookup <- function(ref, work, on) {
+  idx <- ref[work, on = on, which = TRUE]
+  if (length(idx) != nrow(work)) {
+    stop(
+      "Reference lookup returned ", length(idx),
+      " indices for ", nrow(work),
+      " rows; reference table may contain duplicate join keys.",
+      call. = FALSE
+    )
+  }
+  list(
+    idx = idx,
+    rc  = function(col) ref[[col]][idx]
+  )
+}
+
+# A measurement column is usable if it is numeric or entirely NA. An all-NA
+# column such as data.frame(ht = NA) is logical, not numeric, but just means
+# "no values"; num_col() turns it into NA_real_.
 is_num_or_all_na <- function(x) is.numeric(x) || (is.logical(x) && all(is.na(x)))
 num_col <- function(x) if (is.numeric(x)) x else as.numeric(x)
 
