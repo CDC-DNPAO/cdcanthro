@@ -83,12 +83,11 @@ Notes:
 
 * Weight in kg, height/length in cm, BMI in kg/m^2, CDC age in months,
   WHO age in days.
-* Zero and negative measurements are treated as missing.
 * Children outside a reference's age range are kept in the output with
   `NA` for the computed metrics.
 * `cdc_z()`'s `bmiz` and `bmip` use the extended values above the 95th
-  percentile; the LMS-only values are returned as `orig_bmiz` and
-  `orig_bmip`.
+  percentile; the LMS-only values for children with obesity are returned as 
+  `orig_bmiz` and `orig_bmip`.
 
 See `?cdc_z`, `?who_z` and `?gradual_z` for the full list of output
 variables and the formulas used, and [NEWS.md](NEWS.md) for changes by
@@ -114,7 +113,7 @@ completed months to days, add 0.5, multiply by 30.4375 and round.
 `bmip`, ...); WHO z-scores are prefixed `who_` (`who_waz`, `who_lhaz`,
 ...); WHO plausibility flags are prefixed `f` (`fwaz`, `flhaz`, ...);
 gradual z-scores are prefixed `grad_` (`grad_waz`, ...). In `cdc_z()`
-output, `bmiz`/`bmip` are the extended values above the 95th percentile
+output, `bmiz`/`bmip` include the extended values above the 95th percentile
 and `orig_bmiz`/`orig_bmip` are the LMS-only values. Because the three
 sets of names never collide, `who_z()` and `cdc_z()` can be run on the
 same data and `gradual_z(data)` then needs no other arguments -- its
@@ -123,7 +122,7 @@ defaults are exactly their output names.
 **Two deliberate departures from a plain LMS calculation.** For BMI at or
 above the CDC 95th percentile, `cdc_z()` returns the extended z-score and
 percentile of Wei et al. (2020), which models BMI
-above the 95th percentile as half-normal instead of using the Box-Cox transformation. 
+above the 95th percentile as half-normal distribution. 
 For the weight-based WHO indicators (`who_waz`, `who_wflz`, `who_bmiz`), `who_z()`
 extrapolates the SD2 vs SD3 distance to values beyond +/-3 SD, as
 does the WHO `anthro` package.
@@ -131,8 +130,8 @@ does the WHO `anthro` package.
 **Validation.** `cdc_z()` is checked against output of the CDC SAS program
 on a fixture of children's measurements (`tests/testthat/fixtures/sas_cdc.csv`),
 with agreement to 1e-6 for every metric the SAS program produces. 
-`who_z()` is checked against output from the `anthro` package on CRAN; this output
-is rounded to 2 decimal places.
+`who_z()` is similarly checked against output from the `anthro` package on CRAN; 
+`anthro` output is rounded to 2 decimal places.
 
 Both functions also have round-trip tests (a measurement constructed to sit at
 z returns z) and stored reference outputs for a fixed set of children, so
