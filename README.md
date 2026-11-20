@@ -131,7 +131,7 @@ does the WHO `anthro` package.
 **Validation.** `cdc_z()` is checked against output of the CDC SAS program
 on a fixture of children's measurements (`tests/testthat/fixtures/sas_cdc.csv`),
 with agreement to 1e-6 for every metric the SAS program produces. 
-`who_z()` is checked against output of the anthro package on CRAN. Anthro output
+`who_z()` is checked against output from the `anthro` package on CRAN; this output
 is rounded to 2 decimal places.
 
 Both functions also have round-trip tests (a measurement constructed to sit at
